@@ -36,6 +36,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import jmetal.qualityIndicator.QualityIndicator;
+import jxl.read.biff.BiffException;
+import jxl.write.WriteException;
 
 public class NSGAII_main {
   public static Logger      logger_ ;      // Logger object
@@ -55,7 +57,9 @@ public class NSGAII_main {
                                   JMException, 
                                   SecurityException, 
                                   IOException, 
-                                  ClassNotFoundException {
+                                  ClassNotFoundException,
+                                  BiffException,
+                                  WriteException {
     Problem   problem   ;         // The problem to solve
     Algorithm algorithm ;         // The algorithm to use
     Operator  crossover ;         // Crossover operator

@@ -19,6 +19,8 @@ import jmetal.util.Configuration;
 import jmetal.util.JMException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import jxl.read.biff.BiffException;
+import jxl.write.WriteException;
 
 public class SPEA2_main {
   public static Logger      logger_ ;      // Logger object
@@ -35,7 +37,7 @@ public class SPEA2_main {
    *      - jmetal.metaheuristics.mocell.MOCell_main problemName
    *      - jmetal.metaheuristics.mocell.MOCell_main problemName ParetoFrontFile
    */
-  public static void main(String [] args) throws JMException, IOException, ClassNotFoundException {
+  public static void main(String [] args) throws JMException, IOException, ClassNotFoundException, WriteException, BiffException {
     Problem   problem   ;         // The problem to solve
     Algorithm algorithm ;         // The algorithm to use
     Operator  crossover ;         // Crossover operator
