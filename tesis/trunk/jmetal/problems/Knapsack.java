@@ -13,6 +13,7 @@ import jmetal.base.solutionType.ArrayIntSolutionType;
 import jmetal.base.solutionType.BinaryRealSolutionType;
 import jmetal.base.solutionType.RealSolutionType;
 import jmetal.base.solutionType.ArrayRealSolutionType;
+import jmetal.base.solutionType.BinarySolutionType;
 import jmetal.base.solutionType.IntRealSolutionType;
 import jmetal.base.solutionType.IntSolutionType;
 import jmetal.base.solutionType.PermutationSolutionType;
@@ -30,10 +31,10 @@ public class Knapsack extends Problem {
     public Knapsack(String solutionType, Integer numberOfVariables) throws ClassNotFoundException {
 
         numberOfVariables_ = 12;
-        numberOfObjectives_ = 2;
+        numberOfObjectives_ = 1;
         numberOfConstraints_ = 0;
         problemName_ = "Knapsack";
-
+//        length_       = new int[numberOfVariables_];
 
         upperLimit_ = new double[numberOfVariables_];
         lowerLimit_ = new double[numberOfVariables_];
@@ -51,14 +52,14 @@ public class Knapsack extends Problem {
 //        upperLimit_[3] = 2.0;
 //        upperLimit_[4] = 3.0;
 //        upperLimit_[5] = 9.0;
-
+//        length_      [0] = 12 ;
         for (int i = 0; i < numberOfVariables_; i++) {
-            lowerLimit_[i] = 1.0;
-            upperLimit_[i] = 20.0;
+            lowerLimit_[i] = 0.0;
+            upperLimit_[i] = 1.0;
         }
 
         if (solutionType.compareTo("Real") == 0) {
-            solutionType_ = new RealSolutionType(this);
+            solutionType_ = new BinarySolutionType(this);
         } else {
             System.out.println("Error: solution type " + solutionType + " invalid");
             System.exit(-1);
@@ -67,20 +68,21 @@ public class Knapsack extends Problem {
 
     @Override
     public void evaluate(Solution solution) throws JMException {
-        XReal x = new XReal(solution);
+        Variable[] variables = solution.getDecisionVariables();
+        String bits;
 
         double aux, maxPeso = 0.0, maxValor = 0.0; // auxiliar variables
-        double[] fx = new double[2]; // function values
+        double[] fx = new double[1]; // function values
 
 
         for (int var = 0; var < numberOfVariables_ - 6; var++) {
             if (maxPeso <= maxCapacidad) {
-//                if (Math.random() <= 0.5) {
                 aux = maxPeso + VarPeso[var];
                 if (aux < maxCapacidad) {
-
-                        fx[0] = fx[0] + x.getValue(var);
-                        fx[1] = fx[1] + x.getValue(var+6);
+                    bits = variables[var].toString();
+                    if(bits.equals("1"))
+                        fx[0] = fx[0] + VarValor[var];
+                        maxPeso = maxPeso + VarPeso[var];
                 }
             }
         } // for
