@@ -8,14 +8,16 @@ package jmetal.base;
 
 import java.io.*;
 import java.util.*; 
-
+import jxl.*;
+import jxl.read.biff.BiffException;
+import jxl.write.*;
 import jmetal.util.Configuration;
 
 /** 
  * Class representing a SolutionSet (a set of solutions)
  */
 public class SolutionSet implements Serializable {
-    
+
   /**
    * Stores a list of <code>solution</code> objects.
    */
@@ -107,20 +109,32 @@ public class SolutionSet implements Serializable {
    * objects into the set in a file.
    * @param path The output file name
    */
-  public void printObjectivesToFile(String path){
+  public void printObjectivesToFile(String path) throws WriteException, BiffException{
     try {
       /* Open the file */
       FileOutputStream fos   = new FileOutputStream(path)     ;
       OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
       BufferedWriter bw      = new BufferedWriter(osw)        ;
-                        
+      Workbook workbook = Workbook.getWorkbook(new File("output.xls"));
+      WritableWorkbook copy = Workbook.createWorkbook(new File("output.xls"), workbook);
+      WritableSheet sheet = copy.createSheet("Objetivos", 1);
+//          Label label = new Label(0, 2, "A label record");
+//            sheet.addCell(label);
+
+        
+       
       for (int i = 0; i < solutionsList_.size(); i++) {
         //if (this.vector[i].getFitness()<1.0) {
-        bw.write(solutionsList_.get(i).toString());
+        for (int j = 0; j< solutionsList_.get(i).numberOfObjectives(); j++){
+             jxl.write.Number objetive = new jxl.write.Number(j+3, i+1,solutionsList_.get(i).getObjective(j));
+             sheet.addCell(objetive);
+        }
+        bw.write(solutionsList_.get(i).toString());        
         bw.newLine();
         //}
       }
-      
+      copy.write();
+      copy.close();
       /* Close the file */
       bw.close();
     }catch (IOException e) {
@@ -134,21 +148,32 @@ public class SolutionSet implements Serializable {
    * solutions objects into the set in a file.
    * @param path The output file name
    */
-  public void printVariablesToFile(String path){
+  public void printVariablesToFile(String path) throws BiffException, WriteException{
     try {
       /* Open the file */
       FileOutputStream fos   = new FileOutputStream(path)     ;
       OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
-      BufferedWriter bw      = new BufferedWriter(osw)        ;            
-            
+      BufferedWriter bw      = new BufferedWriter(osw)        ;
+
+       WritableWorkbook workbook = Workbook.createWorkbook(new File("output.xls"));
+
+      WritableSheet sheet = workbook.createSheet("Variables", 0);
       int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length ;
       for (int i = 0; i < solutionsList_.size(); i++) {  
       	for (int j = 0; j < numberOfVariables; j++)
+        {
           bw.write(solutionsList_.get(i).getDecisionVariables()[j].toString() + " ");
-        bw.newLine();        
+          Label objetive = new Label(j+3, i+1,solutionsList_.get(i).getDecisionVariables()[j].toString());
+          sheet.addCell(objetive);
+        }
+        bw.newLine();
+      
+
       }
       
       /* Close the file */
+      workbook.write();
+      workbook.close();
       bw.close();
     }catch (IOException e) {
       Configuration.logger_.severe("Error acceding to the file");
