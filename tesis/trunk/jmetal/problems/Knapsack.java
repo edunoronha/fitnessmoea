@@ -19,8 +19,6 @@ import jmetal.base.solutionType.IntSolutionType;
 import jmetal.base.solutionType.PermutationSolutionType;
 import jmetal.base.variable.Real;
 import jmetal.util.JMException;
-import jmetal.util.wrapper.XInt;
-import jmetal.util.wrapper.XReal;
 
 public class Knapsack extends Problem {
 
@@ -70,24 +68,12 @@ public class Knapsack extends Problem {
     public void evaluate(Solution solution) throws JMException {
         Variable[] variables = solution.getDecisionVariables();
         String bits;
-
-        double aux, maxPeso = 0.0, maxValor = 0.0; // auxiliar variables
         double[] fx = new double[1]; // function values
-
-
-        for (int var = 0; var < numberOfVariables_ - 6; var++) {
-            if (maxPeso <= maxCapacidad) {
-                aux = maxPeso + VarPeso[var];
-                if (aux < maxCapacidad) {
+        for (int var = 0; var < numberOfVariables_ - 1; var++) {
                     bits = variables[var].toString();
-                    if(bits.equals("1"))
-                        fx[0] = fx[0] + VarValor[var];
-                        maxPeso = maxPeso + VarPeso[var];
-                }
-            }
+                        fx[0] = fx[0] + VarValor[var]*Integer.valueOf(bits);
         } // for
         solution.setObjective(0, fx[0]);
-//        solution.setObjective(1, fx[1]);
     }
 
     @Override
