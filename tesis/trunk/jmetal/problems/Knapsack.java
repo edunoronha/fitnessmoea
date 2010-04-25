@@ -17,6 +17,7 @@ import jmetal.base.solutionType.BinarySolutionType;
 import jmetal.base.solutionType.IntRealSolutionType;
 import jmetal.base.solutionType.IntSolutionType;
 import jmetal.base.solutionType.PermutationSolutionType;
+import jmetal.base.variable.Binary;
 import jmetal.base.variable.Real;
 import jmetal.util.JMException;
 
@@ -30,31 +31,10 @@ public class Knapsack extends Problem {
 
         numberOfVariables_ = 12;
         numberOfObjectives_ = 1;
-        numberOfConstraints_ = 0;
+        numberOfConstraints_ = 1;
         problemName_ = "Knapsack";
 //        length_       = new int[numberOfVariables_];
 
-        upperLimit_ = new double[numberOfVariables_];
-        lowerLimit_ = new double[numberOfVariables_];
-//
-//        lowerLimit_[0] = 1.0;
-//        lowerLimit_[1] = 4.0;
-//        lowerLimit_[2] = 7.0;
-//        lowerLimit_[3] = 2.0;
-//        lowerLimit_[4] = 3.0;
-//        lowerLimit_[5] = 9.0;
-//
-//        upperLimit_[0] = 1.0;
-//        upperLimit_[1] = 4.0;
-//        upperLimit_[2] = 7.0;
-//        upperLimit_[3] = 2.0;
-//        upperLimit_[4] = 3.0;
-//        upperLimit_[5] = 9.0;
-//        length_      [0] = 12 ;
-        for (int i = 0; i < numberOfVariables_; i++) {
-            lowerLimit_[i] = 0.0;
-            upperLimit_[i] = 1.0;
-        }
 
         if (solutionType.compareTo("Real") == 0) {
             solutionType_ = new BinarySolutionType(this);
@@ -67,16 +47,43 @@ public class Knapsack extends Problem {
     @Override
     public void evaluate(Solution solution) throws JMException {
         Variable[] variables = solution.getDecisionVariables();
+
         String bits;
         double[] fx = new double[1]; // function values
-        for (int var = 0; var < numberOfVariables_ - 1; var++) {
-                    bits = variables[var].toString();
-                        fx[0] = fx[0] + VarValor[var]*Integer.valueOf(bits);
+        for (int var = 0; var < numberOfVariables_; var++) {
+            Binary p1 = (Binary)solution.getDecisionVariables()[var];
+            bits = variables[var].toString();
+            fx[0] = -(fx[0] + VarValor[var] * Integer.valueOf(bits));
         } // for
-        solution.setObjective(0, fx[0]);
+        solution.setObjective(0,-1*fx[0]);
     }
 
     @Override
     public void evaluateConstraints(Solution solution) throws JMException {
+        Variable[] variables = solution.getDecisionVariables();
+        String bits;
+        int number = 0;
+        double total = 0.0;
+        double xPeso = 0.0;
+        double constraint = 0.0;
+
+        for (int var = 0; var < this.numberOfVariables_; var++) {
+            bits = variables[var].toString();
+            if (bits.equals("1")) {
+                xPeso = xPeso + VarPeso[var];
+                if (xPeso > this.maxCapacidad) {
+                    constraint = xPeso -30 + VarPeso[var];
+                }
+            }
+
+        }
+        for (int i = 0; i < this.numberOfConstraints_; i++) {
+            if (constraint > 0.0) {
+                number++;
+                total+=-(constraint);
+            }
+        }
+        solution.setOverallConstraintViolation(-1*(total));
+        solution.setNumberOfViolatedConstraint(number);
     }
 }
