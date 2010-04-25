@@ -62,13 +62,14 @@ public class SPEA2_main {
       indicators = new QualityIndicator(problem, args[1]) ;
     } // if
     else { // Default problem
-      problem = new Kursawe("Real", 3); 
+//      problem = new Kursawe("Real", 3);
       //problem = new Water("Real");
       //problem = new ZDT1("ArrayReal", 1000);
       //problem = new ZDT4("BinaryReal");
       //problem = new WFG1("Real");
       //problem = new DTLZ1("Real");
       //problem = new OKA2("Real") ;
+        problem = new Knapsack("Real",12);
     } // else
        
     algorithm = new SPEA2(problem);
@@ -79,10 +80,10 @@ public class SPEA2_main {
     algorithm.setInputParameter("maxEvaluations",25000);
       
     // Mutation and crossover for real codification
-    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover");                   
+    crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover");
     crossover.setParameter("probability",0.9);                   
     crossover.setParameter("distributionIndex",20.0);
-    mutation = MutationFactory.getMutationOperator("PolynomialMutation");                    
+    mutation = MutationFactory.getMutationOperator("BitFlipMutation");
     mutation.setParameter("probability",1.0/problem.getNumberOfVariables());
     mutation.setParameter("distributionIndex",20.0);
         
