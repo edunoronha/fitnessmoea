@@ -58,10 +58,11 @@ public class Knapsack extends Problem {
         double[] Peso = new double[numberOfObjectives_];
         double[] mochila = new double[numberOfObjectives_]; // function values
         for (int var = 0; var < numberOfVariables_; var++) {
+            double t = variables[var].getValue();
             if(variables[var].getValue()==1){
-                mochila[0] = -(mochila[0] + VarValor1[var]);
+                mochila[0] = mochila[0] + VarValor1[var];
             }else if(variables[var].getValue() == 2){
-                mochila[1] = -(mochila[1] + VarValor2[var]);
+                mochila[1] = mochila[1] + VarValor2[var];
             }
         } // for
         solution.setObjective(0, (-1) * mochila[0]);
@@ -77,28 +78,29 @@ public class Knapsack extends Problem {
         double[] constraint = new double[numberOfConstraints_];
 
         for (int var = 0; var < this.numberOfVariables_; var++) {
+
             if (variables[var].getValue()==1) {
                 pesos[0] = pesos[0] + VarPeso[var];
                 if (pesos[0] > this.maxCapacidad1) {
-                    constraint[0] = pesos[0] - 30 + VarPeso[var];
+                    constraint[0] = pesos[0] - 30;
                 }
             }
         }
         for (int var = 0; var < this.numberOfVariables_; var++) {
-            if (variables[var].getValue()==1) {
+            if (variables[var].getValue()==2) {
                 pesos[1] = pesos[1] + VarPeso[var];
                 if (pesos[1] > this.maxCapacidad2) {
-                    constraint[1] = pesos[1] - 30 + VarPeso[var];
+                    constraint[1] = pesos[1] - 30;
                 }
             }
         }
         for (int i = 0; i < this.numberOfConstraints_; i++) {
             if (constraint[i] > 0.0) {
                 number++;
-                total += -(constraint[i]);
+                total +=constraint[i];
             }
         }
-        solution.setOverallConstraintViolation(-1 * (total));
+        solution.setOverallConstraintViolation((-1)*total);
         solution.setNumberOfViolatedConstraint(number);
     }
 }
