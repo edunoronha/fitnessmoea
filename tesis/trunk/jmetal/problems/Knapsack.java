@@ -23,21 +23,29 @@ import jmetal.util.JMException;
 
 public class Knapsack extends Problem {
 
-    double[] VarValor = {2.0, 8.0, 6.0, 12.0, 4.0, 7.0, 1.0, 3.0, 5.0, 14.0, 15.0, 8.0};
+    double[] VarValor1 = {2.0, 8.0, 6.0, 12.0, 4.0, 7.0, 1.0, 3.0, 5.0, 14.0, 15.0, 8.0};
+    double[] VarValor2 = {3.0, 1.0, 7.0, 11.0, 4.0, 5.0, 2.0, 6.0, 8.0, 13.0, 10.0, 9.0};
     double[] VarPeso = {4.0, 3.0, 6.0, 11.0, 2.0, 10.0, 1.0, 7.0, 9.0, 12.0, 5.0, 13.0};
-    double maxCapacidad = 30.0;
+    double maxCapacidad1 = 30.0;
+    double maxCapacidad2 = 25.0;
 
     public Knapsack(String solutionType, Integer numberOfVariables) throws ClassNotFoundException {
 
         numberOfVariables_ = 12;
-        numberOfObjectives_ = 1;
-        numberOfConstraints_ = 1;
+        numberOfObjectives_ = 2;
+        numberOfConstraints_ = 2;
         problemName_ = "Knapsack";
-//        length_       = new int[numberOfVariables_];
 
+        lowerLimit_ = new double[numberOfVariables_];
+        upperLimit_ = new double[numberOfVariables_];
+
+        for (int var = 0; var < numberOfVariables_; var++) {
+            lowerLimit_[var] = 0.0;
+            upperLimit_[var] = 2.0;
+        }
 
         if (solutionType.compareTo("Real") == 0) {
-            solutionType_ = new BinarySolutionType(this);
+            solutionType_ = new IntSolutionType(this);
         } else {
             System.out.println("Error: solution type " + solutionType + " invalid");
             System.exit(-1);
@@ -47,43 +55,50 @@ public class Knapsack extends Problem {
     @Override
     public void evaluate(Solution solution) throws JMException {
         Variable[] variables = solution.getDecisionVariables();
-
-        String bits;
-        double[] fx = new double[1]; // function values
+        double[] Peso = new double[numberOfObjectives_];
+        double[] mochila = new double[numberOfObjectives_]; // function values
         for (int var = 0; var < numberOfVariables_; var++) {
-            Binary p1 = (Binary)solution.getDecisionVariables()[var];
-            bits = variables[var].toString();
-            fx[0] = -(fx[0] + VarValor[var] * Integer.valueOf(bits));
+            if(variables[var].getValue()==1){
+                mochila[0] = -(mochila[0] + VarValor1[var]);
+            }else if(variables[var].getValue() == 2){
+                mochila[1] = -(mochila[1] + VarValor2[var]);
+            }
         } // for
-        solution.setObjective(0,-1*fx[0]);
+        solution.setObjective(0, (-1) * mochila[0]);
+        solution.setObjective(1, (-1) * mochila[1]);
     }
 
     @Override
     public void evaluateConstraints(Solution solution) throws JMException {
         Variable[] variables = solution.getDecisionVariables();
-        String bits;
         int number = 0;
         double total = 0.0;
-        double xPeso = 0.0;
-        double constraint = 0.0;
+        double[] pesos = new double[numberOfConstraints_];
+        double[] constraint = new double[numberOfConstraints_];
 
         for (int var = 0; var < this.numberOfVariables_; var++) {
-            bits = variables[var].toString();
-            if (bits.equals("1")) {
-                xPeso = xPeso + VarPeso[var];
-                if (xPeso > this.maxCapacidad) {
-                    constraint = xPeso -30 + VarPeso[var];
+            if (variables[var].getValue()==1) {
+                pesos[0] = pesos[0] + VarPeso[var];
+                if (pesos[0] > this.maxCapacidad1) {
+                    constraint[0] = pesos[0] - 30 + VarPeso[var];
                 }
             }
-
         }
-        for (int i = 0; i < this.numberOfConstraints_; i++) {
-            if (constraint > 0.0) {
-                number++;
-                total+=-(constraint);
+        for (int var = 0; var < this.numberOfVariables_; var++) {
+            if (variables[var].getValue()==1) {
+                pesos[1] = pesos[1] + VarPeso[var];
+                if (pesos[1] > this.maxCapacidad2) {
+                    constraint[1] = pesos[1] - 30 + VarPeso[var];
+                }
             }
         }
-        solution.setOverallConstraintViolation(-1*(total));
+        for (int i = 0; i < this.numberOfConstraints_; i++) {
+            if (constraint[i] > 0.0) {
+                number++;
+                total += -(constraint[i]);
+            }
+        }
+        solution.setOverallConstraintViolation(-1 * (total));
         solution.setNumberOfViolatedConstraint(number);
     }
 }
