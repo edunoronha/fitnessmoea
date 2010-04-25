@@ -90,7 +90,7 @@ public class Knapsack extends Problem {
             if (variables[var].getValue()==2) {
                 pesos[1] = pesos[1] + VarPeso[var];
                 if (pesos[1] > this.maxCapacidad2) {
-                    constraint[1] = pesos[1] - 30;
+                    constraint[1] = pesos[1] - 25;
                 }
             }
         }
