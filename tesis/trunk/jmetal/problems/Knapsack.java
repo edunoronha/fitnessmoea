@@ -23,15 +23,18 @@ import jmetal.util.JMException;
 
 public class Knapsack extends Problem {
 
-    double[] VarValor1 = {2.0, 8.0, 6.0, 12.0, 4.0, 7.0, 1.0, 3.0, 5.0, 14.0, 15.0, 8.0};
-    double[] VarValor2 = {3.0, 1.0, 7.0, 11.0, 4.0, 5.0, 2.0, 6.0, 8.0, 13.0, 10.0, 9.0};
-    double[] VarPeso = {4.0, 3.0, 6.0, 11.0, 2.0, 10.0, 1.0, 7.0, 9.0, 12.0, 5.0, 13.0};
-    double maxCapacidad1 = 30.0;
-    double maxCapacidad2 = 25.0;
+    double[] VarValor1 = {2, 8, 6, 12, 4, 7, 1, 3, 5, 14,
+                          15, 8, 1, 16, 5, 16, 11, 5, 2, 19};
+    double[] VarValor2 = {3, 1, 7, 11, 4, 5, 2, 6, 8, 13,
+                          10, 9, 13, 20, 12, 12, 19, 1, 3, 19};
+    double[] VarPeso = {4, 3, 6, 11, 2, 10, 1, 7, 9, 12,
+                        5, 13, 20, 16, 4, 16, 4, 14, 19, 10};
+    double maxCapacidad1 = 50.0;
+    double maxCapacidad2 = 44.0;
 
     public Knapsack(String solutionType, Integer numberOfVariables) throws ClassNotFoundException {
 
-        numberOfVariables_ = 12;
+        numberOfVariables_ = 20;
         numberOfObjectives_ = 2;
         numberOfConstraints_ = 2;
         problemName_ = "Knapsack";
@@ -79,10 +82,10 @@ public class Knapsack extends Problem {
 
         for (int var = 0; var < this.numberOfVariables_; var++) {
 
-            if (variables[var].getValue()==1) {
+            if (variables[var].getValue() == 1) {
                 pesos[0] = pesos[0] + VarPeso[var];
                 if (pesos[0] > this.maxCapacidad1) {
-                    constraint[0] = pesos[0] - 30;
+                    constraint[0] = pesos[0] - 50;
                 }
             }
         }
@@ -90,7 +93,7 @@ public class Knapsack extends Problem {
             if (variables[var].getValue()==2) {
                 pesos[1] = pesos[1] + VarPeso[var];
                 if (pesos[1] > this.maxCapacidad2) {
-                    constraint[1] = pesos[1] - 25;
+                    constraint[1] = pesos[1] - 44;
                 }
             }
         }
