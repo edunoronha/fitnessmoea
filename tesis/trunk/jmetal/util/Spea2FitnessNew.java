@@ -20,7 +20,9 @@ public class Spea2FitnessNew {
   /**
    * Stores the distance between solutions
    */
-  private double [][] distance = null;
+  private double [][] distanceObj = null;
+
+  private double [] distanceObjMayor = null;
 
   /**
    * Stores the solutionSet to assign the fitness
@@ -48,17 +50,25 @@ public class Spea2FitnessNew {
    * @param solutionSet The <code>SolutionSet</code>
    */
   public Spea2FitnessNew(SolutionSet solutionSet) {
-    distance     = distance_.distanceMatrix(solutionSet);
+   // distance     = distance_.distanceMatrix(solutionSet);
+
      for (int j = 0; j < solutionSet.size();j++){
-      Arrays.sort(distance[j]);
-      if ( distance[j][1] > maxdistance)
-            maxdistance = (int) distance[j][1]; // Calcule de D(i) distance
-      //population.get(i).setFitness(rawFitness[i]);
-     } // for
-    solutionSet_ = solutionSet;
-    for (int i = 0; i < solutionSet_.size(); i++) {
-      solutionSet_.get(i).setLocation(i);
-    } // for
+         for (int i= 0 ; i<solutionSet.get(i).numberOfObjectives(); i++){
+             if (distanceObj==null){
+                 distanceObj[i][0] = solutionSet.get(j).getObjective(i);
+                 distanceObj[i][1] = solutionSet.get(j).getObjective(i);
+             }
+             else if (solutionSet.get(j).getObjective(i)< distanceObj[i][0])
+             {
+                 distanceObj[i][0] = solutionSet.get(j).getObjective(i);
+             }
+             else if (solutionSet.get(j).getObjective(i)> distanceObj[i][1])
+             {
+                  distanceObj[i][1] = solutionSet.get(j).getObjective(i);
+             }
+         }
+
+     }
   } // Spea2Fitness
 
 
