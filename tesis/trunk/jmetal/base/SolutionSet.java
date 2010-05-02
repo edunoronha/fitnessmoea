@@ -117,12 +117,7 @@ public class SolutionSet implements Serializable {
       BufferedWriter bw      = new BufferedWriter(osw)        ;
       Workbook workbook = Workbook.getWorkbook(new File("output.xls"));
       WritableWorkbook copy = Workbook.createWorkbook(new File("output.xls"), workbook);
-      WritableSheet sheet = copy.createSheet("Objetivos", 1);
-//          Label label = new Label(0, 2, "A label record");
-//            sheet.addCell(label);
-
-        
-       
+      WritableSheet sheet = copy.getSheet(1);
       for (int i = 0; i < solutionsList_.size(); i++) {
         //if (this.vector[i].getFitness()<1.0) {
         for (int j = 0; j< solutionsList_.get(i).numberOfObjectives(); j++){
@@ -154,10 +149,10 @@ public class SolutionSet implements Serializable {
       FileOutputStream fos   = new FileOutputStream(path)     ;
       OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
       BufferedWriter bw      = new BufferedWriter(osw)        ;
+     Workbook copy = Workbook.getWorkbook(new File("output.xls"));
+      WritableWorkbook workbook = Workbook.createWorkbook(new File("output.xls"), copy);
 
-       WritableWorkbook workbook = Workbook.createWorkbook(new File("output.xls"));
-
-      WritableSheet sheet = workbook.createSheet("Variables", 0);
+       WritableSheet sheet = workbook.getSheet(0);
       int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length ;
       for (int i = 0; i < solutionsList_.size(); i++) {  
       	for (int j = 0; j < numberOfVariables; j++)
