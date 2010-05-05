@@ -101,7 +101,22 @@ public class SPEA2new extends Algorithm{
       // End Create a offSpring solutionSet
       solutionSet = offSpringSolutionSet;                   
     } // while
-        
+    for (int i = 0; i < problem_.getNumberOfObjectives(); i++) {
+      Variable[] minima = new Variable[problem_.getNumberOfVariables()];
+      Variable[] maxima = new Variable[problem_.getNumberOfVariables()];
+      for (int j = 0; j<problem_.getNumberOfVariables();j++)
+      {
+          minima[j].setValue(problem_.getLowerLimit(i));
+          maxima[j].setValue(problem_.getUpperLimit(i));
+      }
+      Solution newSolutionMinima = new Solution(problem_);
+      newSolutionMinima.setDecisionVariables(minima);
+      Solution newSolutionMaxima = new Solution(problem_);
+      newSolutionMaxima.setDecisionVariables(minima);
+      problem_.evaluate(newSolutionMinima);
+      problem_.evaluateConstraints(newSolutionMinima);
+
+    }
     Ranking ranking = new Ranking(archive);
     return ranking.getSubfront(0);
   } // execute    
