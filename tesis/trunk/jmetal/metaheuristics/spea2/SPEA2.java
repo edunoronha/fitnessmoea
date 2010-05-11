@@ -8,6 +8,8 @@ package jmetal.metaheuristics.spea2;
 
 import jmetal.base.*;
 import java.util.Comparator;
+import jmetal.base.variable.Int;
+import jmetal.qualityIndicator.Hypervolume;
 import jmetal.util.*;
 
 /** 
@@ -101,8 +103,14 @@ public class SPEA2 extends Algorithm{
       // End Create a offSpring solutionSet
       solutionSet = offSpringSolutionSet;                   
     } // while
-        
-    Ranking ranking = new Ranking(archive);
+          double[][] minPareto = new double[problem_.getNumberOfObjectives()][problem_.getNumberOfObjectives()];
+       minPareto[0][0] = -100;
+       minPareto[0][1] = -100;
+        Hypervolume toma = new Hypervolume();
+        Ranking ranking = new Ranking(archive);
+        double[][] paretoFront = ranking.getSubfront(0).writeObjectivesToMatrix();
+        double HV = toma.hypervolume(paretoFront, minPareto, problem_.getNumberOfObjectives());
+       System.out.print("Este es el HV del problema tal: "+HV);
     return ranking.getSubfront(0);
   } // execute    
 } // Spea2

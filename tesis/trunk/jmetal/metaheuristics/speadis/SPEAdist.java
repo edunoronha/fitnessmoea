@@ -106,10 +106,10 @@ public class SPEAdist extends Algorithm{
       } // while
       // End Create a offSpring solutionSet
       solutionSet = offSpringSolutionSet;
-      solutionSet.get(0).setCrowdingDistance(archive.get(0).getCrowdingDistance());
+//      solutionSet.get(0).setCrowdingDistance(archive.get(0).getCrowdingDistance());
 //      System.out.println(solutionSet.get(0).getCrowdingDistance()+ " spea2");
     } // while
-  RankingNew ranking = new RankingNew(archive);
+  Ranking ranking = new Ranking(archive);
 //    Ranking ranking = new Ranking(archive);
     return ranking.getSubfront(0);
       
