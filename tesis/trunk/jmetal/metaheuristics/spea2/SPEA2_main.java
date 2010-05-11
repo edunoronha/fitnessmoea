@@ -19,6 +19,7 @@ import jmetal.util.Configuration;
 import jmetal.util.JMException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import jmetal.qualityIndicator.Hypervolume;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 
@@ -62,14 +63,14 @@ public class SPEA2_main {
       indicators = new QualityIndicator(problem, args[1]) ;
     } // if
     else { // Default problem
-//      problem = new Kursawe("Real", 3);
-      //problem = new Water("Real");
+//     problem = new Kursawe("Real", 3);
+     // problem = new Tanaka("Real");
       //problem = new ZDT1("ArrayReal", 1000);
       //problem = new ZDT4("BinaryReal");
       //problem = new WFG1("Real");
       //problem = new DTLZ1("Real");
       //problem = new OKA2("Real") ;
-        problem = new Knapsack("Real",12);
+       problem = new KnapsackMuchos("Real",4);
     } // else
        
     algorithm = new SPEA2(problem);
@@ -80,16 +81,19 @@ public class SPEA2_main {
     algorithm.setInputParameter("maxEvaluations",25000);
       
     // Mutation and crossover for real codification
+//    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover");
     crossover = CrossoverFactory.getCrossoverOperator("SinglePointCrossover");
     crossover.setParameter("probability",0.9);                   
     crossover.setParameter("distributionIndex",20.0);
-    mutation = MutationFactory.getMutationOperator("BitFlipMutation");
+   mutation = MutationFactory.getMutationOperator("BitFlipMutation");
+//    mutation = MutationFactory.getMutationOperator("PolynomialMutation");
     mutation.setParameter("probability",1.0/problem.getNumberOfVariables());
     mutation.setParameter("distributionIndex",20.0);
         
     // Selection operator 
     selection = SelectionFactory.getSelectionOperator("BinaryTournament") ;                           
-    
+    algorithm.setInputParameter("indicators",indicators) ;
+
     // Add the operators to the algorithm
     algorithm.addOperator("crossover",crossover);
     algorithm.addOperator("mutation",mutation);
@@ -103,10 +107,14 @@ public class SPEA2_main {
     // Result messages 
     logger_.info("Total execution time: "+estimatedTime + "ms");
     logger_.info("Objectives values have been writen to file FUN");
-    population.printObjectivesToFile("FUN");
-    logger_.info("Variables values have been writen to file VAR");
+     logger_.info("Variables values have been writen to file VAR");
+  
     population.printVariablesToFile("VAR");      
-    
+    population.printObjectivesToFile("FUN");
+     Hypervolume toma = new Hypervolume();
+    double HV = toma.hypervolume(population.writeObjectivesToMatrix(),population.writeObjectivesToMatrix(), problem.getNumberOfObjectives());
+    System.out.print("Este es el HV del problema: "+HV);
+
     if (indicators != null) {
       logger_.info("Quality indicators") ;
       logger_.info("Hypervolume: " + indicators.getHypervolume(population)) ;

@@ -22,7 +22,7 @@ import jmetal.qualityIndicator.Hypervolume;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 
-public class SPEAnew_main {
+public class SPEA_mainDistancia {
   public static Logger      logger_ ;      // Logger object
   public static FileHandler fileHandler_ ; // FileHandler object
   
@@ -62,8 +62,8 @@ public class SPEAnew_main {
       indicators = new QualityIndicator(problem, args[1]) ;
     } // if
     else { // Default problem
-        problem = new Kursawe("Real",3);
-    //  problem = new Knapsack("Real", 3);
+//        problem = new Kursawe("Real",3);
+      problem = new KnapsackMuchos("Real", 4);
       //problem = new Water("Real");
       //problem = new ZDT1("ArrayReal", 1000);
       //problem = new ZDT4("BinaryReal");
@@ -77,16 +77,16 @@ public class SPEAnew_main {
     // Algorithm parameters
     algorithm.setInputParameter("populationSize",100);
     algorithm.setInputParameter("archiveSize",100);
-    algorithm.setInputParameter("maxEvaluations",5000);
+    algorithm.setInputParameter("maxEvaluations",25000);
       
     // Mutation and crossover for real codification
-    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover");
+//    crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover");
 
-   // crossover = CrossoverFactory.getCrossoverOperator("singlePointCrossover");
+    crossover = CrossoverFactory.getCrossoverOperator("singlePointCrossover");
     crossover.setParameter("probability",0.9);                   
     crossover.setParameter("distributionIndex",20.0);
-    mutation = MutationFactory.getMutationOperator("PolynomialMutation");
-   // mutation = MutationFactory.getMutationOperator("BitFlipMutation");
+//    mutation = MutationFactory.getMutationOperator("PolynomialMutation");
+    mutation = MutationFactory.getMutationOperator("BitFlipMutation");
     mutation.setParameter("probability",1.0/problem.getNumberOfVariables());
     mutation.setParameter("distributionIndex",20.0);
         
@@ -109,7 +109,7 @@ public class SPEAnew_main {
     logger_.info("Variables values have been writen to file SpeaNew");
     population.printVariablesToFile("SpeaNew");
     population.printObjectivesToFile("SpeaNew");
-     Hypervolume toma = new Hypervolume();
+    Hypervolume toma = new Hypervolume();
     double HV = toma.hypervolume(population.writeObjectivesToMatrix(),population.writeObjectivesToMatrix(), problem.getNumberOfObjectives());
     System.out.print("Este es el HV del problema: "+HV);
 
