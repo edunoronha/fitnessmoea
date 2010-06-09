@@ -25,7 +25,7 @@ public class Spea2FitnessNew {
 
     Graphics g;
     Frame f;
-     double[][] distancia =null;
+    double[][] distancia = null;
     double[][] value1 = null;
     double[][][] valorPlano = null;
     private Problem problem_;
@@ -82,9 +82,10 @@ public class Spea2FitnessNew {
         } // for
         for (int j = 0; j < solutionSet.size(); j++) {
             for (int i = 0; i < objetivos; i++) {
-
-                if ((solutionSet.get(j).getObjective(i) < square[i][i])) {
+                 if ((solutionSet.get(j).getObjective(i) < square[i][i])) {
+               
                     square[i][i] = solutionSet.get(j).getObjective(i);
+                
                 }
             }
         }
@@ -121,11 +122,29 @@ public class Spea2FitnessNew {
         planoX_ = new int[planos.length][3];
         planoY_ = new int[planos.length][3];
         for (int k = 0; k < planos.length; k++) {
-            for (int i = 0; i < objetivos; i++) {
+
+            for (int i = 0; i < 3; i++) {
                 planoX_[k][i] = planos[k][i][0];
                 planoY_[k][i] = planos[k][i][1];
             }
+            if (objetivos == 2) {
+                planoX_[k][2] = planos[k][0][0];
+                planoY_[k][2] = planos[k][1][1];
+            }
         }
+        if (objetivos != 2) {
+            cont = 0;
+            for (int i = 0; i < 2; i++) {
+                for (int j = 1; j < 3 - i; j++) {
+
+                    planoX_[cont][2 - cont] = planos[cont][i][0];
+                    planoY_[cont][2 - cont] = planos[cont][i + j][1];
+                    cont++;
+                }
+            }
+        }
+
+
         square_ = square;
     }
 
@@ -176,18 +195,18 @@ public class Spea2FitnessNew {
 
             solutionSet_.get(j).setFitness(fitness[j]);
         }
-        for (int j = 0; j < square_.length; j++) {
-            for (int i = 0; i < square_.length; i++) {
-                System.out.print(square_[j][i] + " ");
-
-
-            }
-
-        }
-
-//        System.out.println("pertenece a fitness contraint: " + cont2);
-        System.out.println("");
-        System.out.println("");
+//        for (int j = 0; j < square_.length; j++) {
+//            for (int i = 0; i < square_.length; i++) {
+//                System.out.print(square_[j][i] + " ");
+//
+//
+//            }
+//
+//        }
+//
+////        System.out.println("pertenece a fitness contraint: " + cont2);
+//        System.out.println("");
+//        System.out.println("");
 
         //System.out.println("gfmir");
     } // fitnessAsign
@@ -195,13 +214,15 @@ public class Spea2FitnessNew {
     public void rectaDistancia() {
         int cont2 = 0;
         int cont4 = 0;
-        int cont3 = 0;
+        int contnoesta = 0;
         int cont5 = 0;
         value1 = new double[solutionSet_.size()][objetivos];
         int numeroPlanos = nPlanos(objetivos);
         double mayorDistancia = 0;
         valorPlano = new double[solutionSet_.size()][numeroPlanos][2];
         distancia = new double[solutionSet_.size()][numeroPlanos];
+        int[] pertenencia = null;
+        pertenencia = new int[solutionSet_.size()];
         for (int j = 0; j < solutionSet_.size(); j++) {
             for (int i = 0; i < objetivos; i++) {
                 value1[j][i] = solutionSet_.get(j).getObjective(i);
@@ -209,7 +230,6 @@ public class Spea2FitnessNew {
             int cont = 0;
             if (objetivos != 2) {
                 for (int i = 0; i < objetivos - 1; i++) {
-
                     for (int k = 1; k < objetivos - i; k++) {
                         valorPlano[j][cont][0] = value1[j][i];
                         valorPlano[j][cont][1] = value1[j][i + k];
@@ -219,30 +239,30 @@ public class Spea2FitnessNew {
             } else {
                 valorPlano[j][0][0] = value1[j][0];
                 valorPlano[j][0][1] = value1[j][1];
-
-
             }
+            pertenencia[j] = lugar(j);
             Line2D.Double[] rectas = new Line2D.Double[numeroPlanos];
-
+            cont = 0;
+           // if (pertenencia[j] == 2) {
             for (int i = 0; i < numeroPlanos; i++) {
-
                 rectas[i] = new Line2D.Double();
                 Point[] punto = new Point[3];
                 for (int l = 0; l < 2; l++) {
-                    punto[l] = new Point(planoX_[i][l], planoY_[i][l]);
+                    punto[l] = new Point(planoX_[i][cont], planoY_[i][cont]);
+                    cont++;
+                    if (cont > 2) {
+                        cont = 0;
+                    }
                 }
-
                 rectas[i].setLine(punto[0], punto[1]);
                 distancia[j][i] = rectas[i].ptLineDist(value1[j][0], value1[j][1]); //acomodar para multi
 //            dibujar(Plano);
             }
+         //   }
         }
 
-        int[] pertenencia = new int[solutionSet_.size()];
         for (int j = 0; j < solutionSet_.size(); j++) {
-
-            pertenencia[j] = lugar(j);
-            if (pertenencia[j] == 0) {
+            if (pertenencia[j] == 2) {
                 for (int i = 0; i < numeroPlanos; i++) {
                     if (mayorDistancia == 0) {
                         mayorDistancia = distancia[j][i];
@@ -259,62 +279,56 @@ public class Spea2FitnessNew {
 
 
             //            } else {
-
-            if (pertenencia[j] != 0) {
-
-//            dibujar(Plano);
-
-                if (distancia[j].length != 1) {
-                    for (int i = 0; i < distancia[j].length - 1; i++) {
-                        if (distancia[j][i] > distancia[j][i + 1]) {
-                            dist[j] = distancia[j][i];
-                        } else {
-                            dist[j] = distancia[j][i + 1];
-                        }
-
+            if (distancia[j].length != 1) {
+                for (int i = 0; i < distancia[j].length - 1; i++) {
+                    if (distancia[j][i] > distancia[j][i + 1]) {
+                        dist[j] = distancia[j][i];
+                    } else {
+                        dist[j] = distancia[j][i + 1];
                     }
-                } else {
-                    dist[j] = distancia[j][0] / 100;
                 }
+            } else {
+                dist[j] = distancia[j][0];
+            }
+            if (pertenencia[j] == 1) {
+
+                dist[j] += 9999;
+
 //            }
                 if (solutionSet_.get(j).getOverallConstraintViolation() != 0) {
-                    dist[j] += Math.abs(solutionSet_.get(j).getOverallConstraintViolation() * 5);
+                    dist[j] += Math.abs(solutionSet_.get(j).getOverallConstraintViolation());
                 }
 //            } else if (pertenencia == -1) {
 //                cont2++;
 //                fitness[j] = 1000;//Math.abs(solutionSet_.get(j).getOverallConstraintViolation()) + 100.33;
 ////                  for (int i = 0; i < solutionSet_.get(i).numberOfObjectives(); i++) {
 //                    distancia[i] = Math.abs(solutionSet_.get(j).getObjective(i) - square_[i][i]);
-                cont3++;
+                contnoesta++;
 
-            } else {
-
-                if (distancia[j].length != 1) {
-                    for (int i = 0; i < distancia[j].length - 1; i++) {
-                        if (distancia[j][i] > distancia[j][i + 1]) {
-                            dist[j] = distancia[j][i];
-                        } else {
-                            dist[j] = distancia[j][i + 1];
-                        }
-
-                    }
-                } else {
-                    dist[j] = distancia[j][0];
-                }
-//            }
-
+            } else if (pertenencia[j] == 2) {
 
                 if (solutionSet_.get(j).getNumberOfViolatedConstraint() == 0) {
-                    dist[j] = 0;
-                     cont2++;
+                    dist[j] = (mayorDistancia-dist[j]) / 100;
+
+                    cont2++;
                 } else {
-                    dist[j] = Math.abs(solutionSet_.get(j).getOverallConstraintViolation()*5);
+                    dist[j] = Math.abs(solutionSet_.get(j).getOverallConstraintViolation());
                 }
+
+            } else {
+                if (solutionSet_.get(j).getNumberOfViolatedConstraint() == 0) {
+                    dist[j] = ((dist[j]) / 100) + 1;
+
+                } else {
+                    dist[j] = Math.abs(solutionSet_.get(j).getOverallConstraintViolation()) * 100;
+                }
+                cont4++;
             }
 
         }
-        System.out.println("dentro del triangulo " + cont3);
-        System.out.println("afuera del triangulo SIN CONSTRAINT: " + cont2);
+//      System.out.println("dentro de al menos uno " + cont4);
+//        System.out.println("dentro de almenos un triangulo " + cont3);
+//        System.out.println("dentro todos SIN CONSTRAINT: " + cont2);
 //
     }
 
@@ -335,10 +349,10 @@ public class Spea2FitnessNew {
             return 2;
         }
         if (flag != 0) {
-            return 1;
+            return 0;
         }
 
-        return 0;
+        return 1;
     } // lugar del plano
 
     public void dibujar(Polygon p) {
@@ -363,12 +377,14 @@ public class Spea2FitnessNew {
 
         // Create a new auxiliar population for no alter the original population
         SolutionSet aux = new SolutionSet(solutionSet_.size());
-         double[] auxdist = new double[solutionSet_.size()];
+        double[] auxdist = new double[solutionSet_.size()];
 
-         int i = 0;
+        int i = 0;
+        Comparator comparator = new FitnessComparator();
+        solutionSet_.sort(comparator);
 
-      while (i < solutionSet_.size()) {
-            if (solutionSet_.get(i).getFitness() == 0) {
+        while (i < solutionSet_.size()) {
+            if (solutionSet_.get(i).getFitness() < 1) {
                 aux.add(solutionSet_.get(i));
                 auxdist[i] = dist[i];
 
@@ -379,9 +395,7 @@ public class Spea2FitnessNew {
         } // while
 
         if (aux.size() < size) {
-            
-Comparator comparator = new FitnessComparator();
-            solutionSet_.sort(comparator);
+
 
             int remain = size - aux.size();
             for (i = 0; i < remain; i++) {
@@ -391,67 +405,67 @@ Comparator comparator = new FitnessComparator();
         } else if (aux.size() == size) {
             return aux;
         }
-         double [][] distance = distance_.distanceMatrix(aux);
-    List< List<DistanceNode> > distanceList = new LinkedList< List<DistanceNode> >();
-    for (int pos = 0; pos < aux.size(); pos++) {
-      aux.get(pos).setLocation(pos);
-      List<DistanceNode> distanceNodeList = new ArrayList<DistanceNode>();
-      for (int ref = 0; ref < aux.size(); ref++) {
-        if (pos != ref) {
-          distanceNodeList.add(new DistanceNode(auxdist[pos],ref));
-        } // if
-      } // for
-      distanceList.add(distanceNodeList);
-    } // for
+        double[][] distance = distance_.distanceMatrix(aux);
+        List<List<DistanceNode>> distanceList = new LinkedList<List<DistanceNode>>();
+        for (int pos = 0; pos < aux.size(); pos++) {
+            aux.get(pos).setLocation(pos);
+            List<DistanceNode> distanceNodeList = new ArrayList<DistanceNode>();
+            for (int ref = 0; ref < aux.size(); ref++) {
+                if (pos != ref) {
+                    distanceNodeList.add(new DistanceNode(distance[pos][ref], ref));
+                } // if
+            } // for
+            distanceList.add(distanceNodeList);
+        } // for
 
 
-    for (int q = 0; q < distanceList.size(); q++){
-      Collections.sort(distanceList.get(q),distanceNodeComparator);
-    } // for
+        for (int q = 0; q < distanceList.size(); q++) {
+            Collections.sort(distanceList.get(q), distanceNodeComparator);
+        } // for
 
-    while (aux.size() > size) {
-      double minDistance = Double.MAX_VALUE;
-      int toRemove = 0;
-      i = 0;
-      Iterator<List<DistanceNode>> iterator = distanceList.iterator();
-      while (iterator.hasNext()){
-        List<DistanceNode> dn = iterator.next();
-        if (dn.get(0).getDistance() < minDistance){
-          toRemove = i;
-          minDistance = dn.get(0).getDistance();
-          //i y toRemove have the same distance to the first solution
-        } else if (dn.get(0).getDistance() == minDistance) {
-          int k = 0;
-          while ((dn.get(k).getDistance() ==
-        	      distanceList.get(toRemove).get(k).getDistance()) &&
-                  k < (distanceList.get(i).size()-1)) {
-            k++;
-          }
+        while (aux.size() > size) {
+            double minDistance = Double.MAX_VALUE;
+            int toRemove = 0;
+            i = 0;
+            Iterator<List<DistanceNode>> iterator = distanceList.iterator();
+            while (iterator.hasNext()) {
+                List<DistanceNode> dn = iterator.next();
+                if (dn.get(0).getDistance() < minDistance) {
+                    toRemove = i;
+                    minDistance = dn.get(0).getDistance();
+                    //i y toRemove have the same distance to the first solution
+                } else if (dn.get(0).getDistance() == minDistance) {
+                    int k = 0;
+                    while ((dn.get(k).getDistance()
+                            == distanceList.get(toRemove).get(k).getDistance())
+                            && k < (distanceList.get(i).size() - 1)) {
+                        k++;
+                    }
 
-          if (dn.get(k).getDistance() <
-              distanceList.get(toRemove).get(k).getDistance()) {
-            toRemove = i;
-          } // if
-        } // if
-        i++;
-      } // while
+                    if (dn.get(k).getDistance()
+                            < distanceList.get(toRemove).get(k).getDistance()) {
+                        toRemove = i;
+                    } // if
+                } // if
+                i++;
+            } // while
 
-      int tmp = aux.get(toRemove).getLocation();
-      aux.remove(toRemove);
-      distanceList.remove(toRemove);
+            int tmp = aux.get(toRemove).getLocation();
+            aux.remove(toRemove);
+            distanceList.remove(toRemove);
 
-      Iterator<List<DistanceNode>> externIterator = distanceList.iterator();
-      while (externIterator.hasNext()){
-        Iterator<DistanceNode> interIterator = externIterator.next().iterator();
-        while (interIterator.hasNext()){
-          if (interIterator.next().getReference() == tmp){
-            interIterator.remove();
-            continue;
-          } // if
+            Iterator<List<DistanceNode>> externIterator = distanceList.iterator();
+            while (externIterator.hasNext()) {
+                Iterator<DistanceNode> interIterator = externIterator.next().iterator();
+                while (interIterator.hasNext()) {
+                    if (interIterator.next().getReference() == tmp) {
+                        interIterator.remove();
+                        continue;
+                    } // if
+                } // while
+            } // while
         } // while
-      } // while
-    } // while
-    return aux;
+        return aux;
 //        double[] distance = new double[objetivos];
 //        double[] distance2 = new double[aux.size()];
 
