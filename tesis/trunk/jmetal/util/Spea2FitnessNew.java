@@ -1,4 +1,4 @@
-/**
+    /**
  * Spea2Fitness.java
  *
  * @author Juanjo Durillo
@@ -72,6 +72,8 @@ public class Spea2FitnessNew {
         solutionSet_ = solutionSet;
         double[][] puntos = new double[2][objetivos];
         double[][] square = new double[objetivos][objetivos];
+        double[] min = new double[objetivos];
+        double[] max = new double[objetivos];
         for (int i = 0; i < solutionSet_.size(); i++) {
             solutionSet_.get(i).setLocation(i);
 //              for (int j = 0; j < objetivos; j++) {
@@ -82,11 +84,18 @@ public class Spea2FitnessNew {
         } // for
         for (int j = 0; j < solutionSet.size(); j++) {
             for (int i = 0; i < objetivos; i++) {
-                 if ((solutionSet.get(j).getObjective(i) < square[i][i])) {
-               
+                int a=i+1;
+                if (a==objetivos)
+                        a=0;
+                 if ((solutionSet.get(j).getObjective(i) < max[i])) {
+              max[i]= solutionSet.get(j).getObjective(i);
                     square[i][i] = solutionSet.get(j).getObjective(i);
                 
                 }
+                 if ((min[i]==0)||(solutionSet.get(j).getObjective(i) > min[i])){
+                     min[i] = solutionSet.get(j).getObjective(i);
+                 }
+
             }
         }
         int lados = nPlanos(objetivos);
@@ -94,14 +103,15 @@ public class Spea2FitnessNew {
         int[][][] planos = new int[lados][3][2];
         if (objetivos != 2) {
             for (int k = 0; k < objetivos; k++) {
-                cont = 0;
-                for (int i = 0; i < objetivos - 1; i++) {
-                    for (int j = 1; j < objetivos - i; j++) {
-                        planos[cont][k][0] = (int) square[k][i];
-                        planos[cont][k][1] = (int) square[k][i + j];
-                        cont++;
-                    }
+                int[][] lado = new int[2][2];
+                for (int i = 0; i < 2; i++) {
+                    int a= i+k;
+                    if (a==objetivos)
+                        a=0;
+                   lado[i][0]= (int) max[a];
+                   lado[i][1]=(int) 0;// (max[a])/2;
                 }
+                planos[k] = lado;
 
             }
         } else {
@@ -117,31 +127,28 @@ public class Spea2FitnessNew {
                 }
             }
         }
+        int[] aux = planos[objetivos-1][0];
+        planos[objetivos-1][0]=planos[objetivos-1][1];
+        planos[objetivos-1][1]=aux;
+        for (int i=0;i<planos.length;i++){
+            int aux2= planos[i][1][0];
+            planos[i][1][0] = planos[i][1][1];
+            planos[i][1][1] = aux2;
+        }
 
 
         planoX_ = new int[planos.length][3];
         planoY_ = new int[planos.length][3];
         for (int k = 0; k < planos.length; k++) {
 
-            for (int i = 0; i < 3; i++) {
-                planoX_[k][i] = planos[k][i][0];
-                planoY_[k][i] = planos[k][i][1];
+            for (int i = 0; i < 2; i++) {
+                planoX_[k][i] = planos[k][0][i];
+                planoY_[k][i] = planos[k][1][i];
             }
-            if (objetivos == 2) {
                 planoX_[k][2] = planos[k][0][0];
                 planoY_[k][2] = planos[k][1][1];
-            }
-        }
-        if (objetivos != 2) {
-            cont = 0;
-            for (int i = 0; i < 2; i++) {
-                for (int j = 1; j < 3 - i; j++) {
 
-                    planoX_[cont][2 - cont] = planos[cont][i][0];
-                    planoY_[cont][2 - cont] = planos[cont][i + j][1];
-                    cont++;
-                }
-            }
+
         }
 
 
@@ -327,7 +334,7 @@ public class Spea2FitnessNew {
 
         }
 //      System.out.println("dentro de al menos uno " + cont4);
-//        System.out.println("dentro de almenos un triangulo " + cont3);
+////        System.out.println("dentro de almenos un triangulo " + cont3);
 //        System.out.println("dentro todos SIN CONSTRAINT: " + cont2);
 //
     }
