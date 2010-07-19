@@ -23,18 +23,48 @@ import jmetal.util.JMException;
 
 public class Knapsack extends Problem {
 
-    double[] VarValor1 = {2, 8, 6, 12, 4, 7, 1, 3, 5, 14,
-                          15, 8, 1, 16, 5, 16, 11, 5, 2, 19};
-    double[] VarValor2 = {3, 1, 7, 11, 4, 5, 2, 6, 8, 13,
-                          10, 9, 13, 20, 12, 12, 19, 1, 3, 19};
-    double[] VarPeso = {4, 3, 6, 11, 2, 10, 1, 7, 9, 12,
-                        5, 13, 20, 16, 4, 16, 4, 14, 19, 10};
-    double maxCapacidad1 = 50.0;
-    double maxCapacidad2 = 44.0;
+double[] VarValor1 = {17,	17,	21,	20,	11,	24,	16,
+8,	22,	1,	10,	24,	10,	13,
+7,	1,	17,	16,	3,	10,	2,
+12,	14,	3,	13,	2,	19,	13,
+12,	9,	15,	15,	2,	13,	14,
+12,	15,	10,	22,	18,	12,	24,
+1,	16,	21,	22,	8,	17,	19,
+19,	7,	6,	2,	19,	20,	24,
+2,	5,	17,	3,	17,	18,	8,
+7,	16,	13,	25,	23,	12,	19
+};
+
+    double[] VarValor2 = {3,	12,	17,	8,	25,	3,	20,
+20,	20,	1,	2,	20,	22,	9,
+6,	2,	9,	22,	16,	8,	8,
+9,	1,	3,	18,	23,	9,	2,
+25,	14,	15,	16,	19,	4,	8,
+2,	12,	17,	15,	10,	22,	4,
+4,	21,	5,	18,	14,	18,	11,
+2,	7,	8,	16,	1,	15,	15,
+11,	7,	20,	14,	14,	15,	15,
+5,	16,	3,	18,	18,	2,	25
+};
+        
+    double[] VarPeso = {6,	7,	2,	14,	4,	21,	10,
+14,	15,	22,	16,	24,	17,	12,
+23,	5,	9,	11,	9,	9,	12,
+21,	9,	7,	24,	21,	20,	22,
+16,	6,	13,	5,	23,	10,	15,
+25,	15,	15,	15,	11,	3,	10,
+2,	20,	6,	6,	20,	20,	18,
+2,	9,	13,	14,	24,	14,	21,
+5,	14,	2,	6,	15,	2,	21,
+9,	21,	9,	4,	18,	4,	4
+};
+    
+    double maxCapacidad1 = 450.0;
+    double maxCapacidad2 = 390.0;
 
     public Knapsack(String solutionType, Integer numberOfVariables) throws ClassNotFoundException {
 
-        numberOfVariables_ = 20;
+        numberOfVariables_ = 70;
         numberOfObjectives_ = 2;
         numberOfConstraints_ = 2;
         problemName_ = "Knapsack";
