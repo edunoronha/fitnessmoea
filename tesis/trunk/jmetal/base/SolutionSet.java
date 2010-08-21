@@ -1,19 +1,19 @@
 /**
 * SolutionSet.java
-* 
+*
 * @author Juan J. Durillo
 * @version 1.0
 */
 package jmetal.base;
 
 import java.io.*;
-import java.util.*; 
+import java.util.*;
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.*;
 import jmetal.util.Configuration;
 
-/** 
+/**
  * Class representing a SolutionSet (a set of solutions)
  */
 public class SolutionSet implements Serializable {
@@ -22,12 +22,12 @@ public class SolutionSet implements Serializable {
    * Stores a list of <code>solution</code> objects.
    */
   protected List<Solution> solutionsList_;
-  
-  /** 
-   * Maximum size of the solution set 
+
+  /**
+   * Maximum size of the solution set
    */
-  private int capacity_ = 0; 
-    
+  private int capacity_ = 0;
+
   /**
    * Constructor.
    * Creates an unbounded solution set.
@@ -35,21 +35,21 @@ public class SolutionSet implements Serializable {
   public SolutionSet() {
     solutionsList_ = new ArrayList<Solution>();
   } // SolutionSet
-    
-  /** 
+
+  /**
    * Creates a empty solutionSet with a maximum capacity.
    * @param maximumSize Maximum size.
    */
-  public SolutionSet(int maximumSize){    
+  public SolutionSet(int maximumSize){
     solutionsList_ = new ArrayList<Solution>();
     capacity_      = maximumSize;
   } // SolutionSet
-    
- /** 
-  * Inserts a new solution into the SolutionSet. 
+
+ /**
+  * Inserts a new solution into the SolutionSet.
   * @param solution The <code>Solution</code> to store
-  * @return True If the <code>Solution</code> has been inserted, false 
-  * otherwise. 
+  * @return True If the <code>Solution</code> has been inserted, false
+  * otherwise.
   */
   public boolean add(Solution solution) {
     if (solutionsList_.size() == capacity_) {
@@ -58,11 +58,11 @@ public class SolutionSet implements Serializable {
       Configuration.logger_.severe("\t Size is: "+ this.size());
       return false;
     } // if
-    
+
     solutionsList_.add(solution);
     return true;
   } // add
-    
+
   /**
    * Returns the ith solution in the set.
    * @param i Position of the solution to obtain.
@@ -75,7 +75,7 @@ public class SolutionSet implements Serializable {
     }
     return solutionsList_.get(i);
   } // get
-      
+
   /**
    * Returns the maximum capacity of the solution set
    * @return The maximum capacity of the solution set
@@ -83,8 +83,8 @@ public class SolutionSet implements Serializable {
   public int getMaxSize(){
     return capacity_ ;
   } // getMaxSize
-      
-  /** 
+
+  /**
    * Sorts a SolutionSet using a <code>Comparator</code>.
    * @param comparator <code>Comparator</code> used to sort.
    */
@@ -95,36 +95,36 @@ public class SolutionSet implements Serializable {
     } // if
     Collections.sort(solutionsList_,comparator);
   } // sort
-      
-  /** 
+
+  /**
    * Returns the number of solutions in the SolutionSet.
    * @return The size of the SolutionSet.
-   */  
+   */
   public int size(){
     return solutionsList_.size();
   } // size
-                
-  /** 
-   * Writes the objective funcion values of the <code>Solution</code> 
+
+  /**
+   * Writes the objective funcion values of the <code>Solution</code>
    * objects into the set in a file.
    * @param path The output file name
    */
-  public void printObjectivesToFile(String path) throws WriteException, BiffException{
+  public void printObjectivesToFile(String path, String path2) throws WriteException, BiffException{
     try {
       /* Open the file */
       FileOutputStream fos   = new FileOutputStream(path)     ;
       OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
       BufferedWriter bw      = new BufferedWriter(osw)        ;
-      Workbook workbook = Workbook.getWorkbook(new File("output.xls"));
-      WritableWorkbook copy = Workbook.createWorkbook(new File("output.xls"), workbook);
-      WritableSheet sheet = copy.getSheet(1);
+      Workbook workbook = Workbook.getWorkbook(new File(path2+".xls"));
+      WritableWorkbook copy = Workbook.createWorkbook(new File(path2+".xls"), workbook);
+      WritableSheet sheet = copy.createSheet("objetivos", 1);
       for (int i = 0; i < solutionsList_.size(); i++) {
         //if (this.vector[i].getFitness()<1.0) {
         for (int j = 0; j< solutionsList_.get(i).numberOfObjectives(); j++){
              jxl.write.Number objetive = new jxl.write.Number(j+3, i+1,solutionsList_.get(i).getObjective(j));
              sheet.addCell(objetive);
         }
-        bw.write(solutionsList_.get(i).toString());        
+        bw.write(solutionsList_.get(i).toString());
         bw.newLine();
         //}
       }
@@ -137,35 +137,37 @@ public class SolutionSet implements Serializable {
       e.printStackTrace();
     }
   } // printObjectivesToFile
- 
+
   /**
    * Writes the decision variable values of the <code>Solution</code>
    * solutions objects into the set in a file.
    * @param path The output file name
    */
-  public void printVariablesToFile(String path) throws BiffException, WriteException{
+  public void printVariablesToFile(String path, String path2) throws BiffException, WriteException{
     try {
       /* Open the file */
       FileOutputStream fos   = new FileOutputStream(path)     ;
       OutputStreamWriter osw = new OutputStreamWriter(fos)    ;
       BufferedWriter bw      = new BufferedWriter(osw)        ;
-     Workbook copy = Workbook.getWorkbook(new File("output.xls"));
-      WritableWorkbook workbook = Workbook.createWorkbook(new File("output.xls"), copy);
+    
+      WritableWorkbook workbook = Workbook.createWorkbook(new File(path2+".xls"));
 
-       WritableSheet sheet = workbook.getSheet(0);
+       WritableSheet sheet = workbook.createSheet("variables", 0);
       int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length ;
-      for (int i = 0; i < solutionsList_.size(); i++) {  
+      for (int i = 0; i < solutionsList_.size(); i++) {
       	for (int j = 0; j < numberOfVariables; j++)
         {
           bw.write(solutionsList_.get(i).getDecisionVariables()[j].toString() + " ");
-          Label objetive = new Label(j+3, i+1,solutionsList_.get(i).getDecisionVariables()[j].toString());
-          sheet.addCell(objetive);
+          Label objetive = new Label(j+3, i+1,(solutionsList_.get(i).getDecisionVariables()[j].toString()));
+          //sheet.addCell(objetive);
         }
+           jxl.write.Number peso = new jxl.write.Number(24,i+1,(solutionsList_.get(i).getNumberOfViolatedConstraint()));
+           //sheet.addCell(peso);
         bw.newLine();
-      
+
 
       }
-      
+
       /* Close the file */
       workbook.write();
       workbook.close();
@@ -173,62 +175,62 @@ public class SolutionSet implements Serializable {
     }catch (IOException e) {
       Configuration.logger_.severe("Error acceding to the file");
       e.printStackTrace();
-    }       
+    }
   } // printVariablesToFile
-     
-  /** 
+
+  /**
    * Empties the SolutionSet
    */
   public void clear(){
     solutionsList_.clear();
   } // clear
-    
-  /** 
+
+  /**
    * Deletes the <code>Solution</code> at position i in the set.
    * @param i The position of the solution to remove.
    */
-  public void remove(int i){        
-    if (i > solutionsList_.size()-1) {            
+  public void remove(int i){
+    if (i > solutionsList_.size()-1) {
       Configuration.logger_.severe("Size is: "+this.size());
     } // if
-    solutionsList_.remove(i);    
+    solutionsList_.remove(i);
   } // remove
-    
-    
+
+
   /**
    * Returns an <code>Iterator</code> to access to the solution set list.
    * @return the <code>Iterator</code>.
-   */    
+   */
   public Iterator<Solution> iterator(){
     return solutionsList_.iterator();
-  } // iterator   
-   
-  /** 
+  } // iterator
+
+  /**
    * Returns a new <code>SolutionSet</code> which is the result of the union
    * between the current solution set and the one passed as a parameter.
    * @param solutionSet SolutionSet to join with the current solutionSet.
    * @return The result of the union operation.
    */
-  public SolutionSet union(SolutionSet solutionSet) {       
+  public SolutionSet union(SolutionSet solutionSet) {
     //Check the correct size. In development
     int newSize = this.size() + solutionSet.size();
     if (newSize < capacity_)
       newSize = capacity_;
-        
-    //Create a new population 
-    SolutionSet union = new SolutionSet(newSize);                
-    for (int i = 0; i < this.size(); i++) {      
+
+    //Create a new population
+    SolutionSet union = new SolutionSet(newSize);
+    for (int i = 0; i < this.size(); i++) {
       union.add(this.get(i));
     } // for
-        
+
     for (int i = this.size(); i < (this.size() + solutionSet.size()); i++) {
       union.add(solutionSet.get(i-this.size()));
     } // for
-            
-    return union;        
-  } // union                   
-    
-  /** 
+
+    return union;
+  } // union
+
+  /**
    * Replaces a solution by a new one
    * @param position The position of the solution to replace
    * @param solution The new solution
@@ -236,7 +238,7 @@ public class SolutionSet implements Serializable {
   public void replace(int position, Solution solution) {
     if (position > this.solutionsList_.size()) {
       solutionsList_.add(solution);
-    } // if 
+    } // if
     solutionsList_.remove(position);
     solutionsList_.add(position,solution);
   } // replace
