@@ -18,11 +18,14 @@ import jmetal.base.solutionType.IntRealSolutionType;
 import jmetal.base.solutionType.IntSolutionType;
 import jmetal.base.solutionType.PermutationSolutionType;
 import jmetal.base.variable.Binary;
+import jmetal.base.variable.Int;
 import jmetal.base.variable.Real;
 import jmetal.util.JMException;
+import jmetal.util.PseudoRandom;
 
 public class KnapsackMuchos extends Problem {
 
+    double[][] valores;
     double[] VarValor1 = {17,	17,	21,	20,	11,	24,	16,
 8,	22,	1,	10,	24,	10,	13,
 7,	1,	17,	16,	3,	10,	2,
@@ -82,30 +85,36 @@ public class KnapsackMuchos extends Problem {
 23,	10,	24,	5,	15,	16,	11,
 25,	21,	17,	24,	15,	20,	18
 };
+
+    double[] VarPeso;
+    double maxCapacidad1 = 1900.0;
+    double maxCapacidad2 = 2300.0;
+    double maxCapacidad3 = 3280.0;
+    double maxCapacidad4 = 1500.0;
+    double maxCapacidad5 = 1900.0;
+ public KnapsackMuchos(String solutionType) throws ClassNotFoundException {
+    this(solutionType, 3);
+  } // Kursawe
+ public void llenarValores(){
     
-    double[] VarPeso = {6,	7,	2,	14,	4,	21,	10,
-14,	15,	22,	16,	24,	17,	12,
-23,	5,	9,	11,	9,	9,	12,
-21,	9,	7,	24,	21,	20,	22,
-16,	6,	13,	5,	23,	10,	15,
-25,	15,	15,	15,	11,	3,	10,
-2,	20,	6,	6,	20,	20,	18,
-2,	9,	13,	14,	24,	14,	21,
-5,	14,	2,	6,	15,	2,	21,
-9,	21,	9,	4,	18,	4,	4
-};
-    double maxCapacidad1 = 400.0;
-    double maxCapacidad2 = 370.0;
-    double maxCapacidad3 = 500.0;
-    double maxCapacidad4 = 490.0;
-    double maxCapacidad5 = 370.0;
-
+ }
     public KnapsackMuchos(String solutionType, Integer numberOfObj) throws ClassNotFoundException {
-
-        numberOfVariables_ = 70;
+        numberOfVariables_=750;
         numberOfObjectives_ = numberOfObj;
+        valores = new double[numberOfObj][numberOfVariables_];
+        VarPeso = new double[numberOfVariables_];
+         for (int i =0;i<numberOfObj;i++){
+
+         for (int j=0;j<numberOfVariables_;j++){
+            valores[i][j]=  PseudoRandom.randInt(1, 50) ;
+
+         }
+     }
+        for (int j=0;j<numberOfVariables_;j++){
+         VarPeso[j]   = PseudoRandom.randInt(3,15);
+        }
         numberOfConstraints_ = numberOfObj;
-        problemName_ = "Knapsack";
+        problemName_ = "KnapsackMuchos";
 
         lowerLimit_ = new double[numberOfVariables_];
         upperLimit_ = new double[numberOfVariables_];
@@ -130,19 +139,19 @@ public class KnapsackMuchos extends Problem {
         double[] mochila = new double[numberOfObjectives_]; // function values
         for (int var = 0; var < numberOfVariables_; var++) {
             if ((variables[var].getValue() == 1) && (mochila.length >= 1)) {
-                mochila[0] = mochila[0] + VarValor1[var];
+                mochila[0] = mochila[0] + valores[0][var];
             }
             if ((variables[var].getValue() == 2) && (mochila.length >= 2)) {
-                mochila[1] = mochila[1] + VarValor2[var];
+                mochila[1] = mochila[1] + valores[1][var];
             }
             if ((variables[var].getValue() == 3) && (mochila.length >= 3)) {
-                mochila[2] = mochila[2] + VarValor3[var];
+                mochila[2] = mochila[2] + valores[2][var];
             }
             if ((variables[var].getValue() == 4) && (mochila.length >= 4)) {
-                mochila[3] = mochila[3] + VarValor4[var];
+            //    mochila[3] = mochila[3] + valores[3][var];
             }
             if ((variables[var].getValue() == 5) && (mochila.length >= 5)) {
-                mochila[4] = mochila[4] + VarValor5[var];
+                //mochila[4] = mochila[4] + valores[4][var];
             }
         } // for
         for (int i = 0; i < numberOfObjectives_; i++) {
