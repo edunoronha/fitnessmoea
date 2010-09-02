@@ -179,7 +179,7 @@ public class Spea2FitnessCercano {
         return aux;
     } // environmentalSelection
 
-    public int compareSitio(Object object1) {
+    public double compareSitio(Object object1) {
         int dominate1; // dominate1 indicates if some objective of solution1
         int dominate2; // is the complementary of dominate1.
         Solution solution1 = (Solution) object1;
@@ -196,11 +196,11 @@ public class Spea2FitnessCercano {
             double areaOptima = 0;//*2;
             double c = 0;
             if (max[0] > 0) {
-                areaOptima = (max[i] * 1 / 2 + max[i]);//*2;
-                c = (max[i] * 3 / 4);
+                areaOptima = (max[i] * 7 / 10 + max[i]);//*2;
+                c = (max[i] * 9 / 10);
             } else {
-                areaOptima = (max[i] *3/ 4);//*2;
-                c = (max[i] * 4 / 5);
+                areaOptima = (max[i] *7 / 10);//*2;
+                c = (max[i] *  9 / 10);
             }
             if (solution1.getObjective(i) <= areaOptima) {//(max[i]/2)){
                 flag++;
@@ -209,6 +209,15 @@ public class Spea2FitnessCercano {
                 }
             }
         }
+//        if ((flag == solution1.numberOfObjectives()) && (special == 1)) {
+//            return 0;
+//        } else if ((flag >= solution1.numberOfObjectives() * 2 / 3)) {
+//            return 0.5;
+//        } else if (flag >= solution1.numberOfObjectives() * 1 / 3) {
+//            return 1;
+//        } else {
+//            return 3;
+//        }
         if ((flag == solution1.numberOfObjectives()) && (special == 1)) {
             return 0;
         } else if ((flag >= solution1.numberOfObjectives() * 2 / 3)) {
