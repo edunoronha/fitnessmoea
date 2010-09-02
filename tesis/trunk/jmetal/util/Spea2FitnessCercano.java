@@ -49,6 +49,7 @@ public class Spea2FitnessCercano {
        if (max==null)
         max = new double[objetivos];
         for (int i = 0; i < solutionSet.size(); i++) {
+            if (solutionSet.get(i).getOverallConstraintViolation()==0){
             for (int j = 0; j < objetivos; j++) {
                 if ((solutionSet.get(i).getObjective(j) < 0)&&(solutionSet.get(i).getNumberOfViolatedConstraint()!=0)) {
                     max[j] = Math.min(solutionSet.get(i).getObjective(j), max[j]);
@@ -59,6 +60,7 @@ public class Spea2FitnessCercano {
                         max[j] = Math.min(solutionSet.get(i).getObjective(j), max[j]);
                     }
                 }
+            }
             }
             solutionSet_.get(i).setLocation(i);
         } // for
@@ -190,7 +192,7 @@ public class Spea2FitnessCercano {
         int flag = 0;
         if (solution1.getOverallConstraintViolation() != 0) {
             int numeroConstraints = solution1.getNumberOfViolatedConstraint();
-            return numeroConstraints + 2;
+            return 4;
         }
         for (int i = 0; i < solution1.numberOfObjectives(); i++) {
             double areaOptima = 0;//*2;
@@ -218,11 +220,13 @@ public class Spea2FitnessCercano {
 //        } else {
 //            return 3;
 //        }
-        if ((flag == solution1.numberOfObjectives()) && (special == 1)) {
+        if ((flag == solution1.numberOfObjectives())&& (special == 1) ) {
             return 0;
-        } else if ((flag >= solution1.numberOfObjectives() * 2 / 3)) {
+
+
+        }else if ((flag >= solution1.numberOfObjectives() * 2 / 3)|| (special == 1)) {
             return 1;
-        } else if (flag >= solution1.numberOfObjectives() * 1 / 3) {
+        } else if ((flag >= solution1.numberOfObjectives() * 1 / 3)) {
             return 2;
         } else {
             return 3;
