@@ -20,15 +20,15 @@ public class SetCoverage {
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) {
-        double[][] matrizSPEA = archivoAMatriz("C:/tesis/FUN");
+        double[][] matrizSPEA = archivoAMatriz("C:/tesis/FUNspea0");
 //        double[][] matrizNSGA = archivoAMatriz("C:/tesis/NSGAIIFUN");
 //        double[][] matrizSPEAdis = archivoAMatriz("C:/tesis/SPEAFUNDISTANCIA");
 //        double[][] matrizSPEAcua = archivoAMatriz("C:/tesis/SPEAFUNCUADRANTE");
-        double[][] matrizSPEAanillos = archivoAMatriz("C:/tesis/FUNanillos");
-        int objetivos = objetivos("C:/tesis/FUN");
+        double[][] matrizSPEAcercano = archivoAMatriz("C:/tesis/FUNspeaCercano0");
+        int objetivos = objetivos("C:/tesis/FUNspea0");
         SetCoverage SC = new SetCoverage();
-        SC.calcular(matrizSPEA,matrizSPEAanillos, objetivos);
-        SC.calcular(matrizSPEAanillos, matrizSPEA, objetivos);
+        SC.calcular(matrizSPEA,matrizSPEAcercano, objetivos);
+        SC.calcular(matrizSPEAcercano, matrizSPEA, objetivos);
 //        SC.calcular(matrizNSGA, matrizSPEAdis, objetivos);
 //        SC.calcular(matrizSPEAdis, matrizNSGA, objetivos);
 //        SC.calcular(matrizSPEAdis, matrizSPEA, objetivos);
@@ -66,8 +66,7 @@ public class SetCoverage {
         System.out.println(totalDom + "%");
         return totalDom;
     }
-
-    public static double[][] archivoAMatriz(String path) {
+ public static double[][] archivoAMatriz(String path) {
         String linea = "";
         int espacio = 0;
         int contador = 0;
@@ -83,9 +82,9 @@ public class SetCoverage {
                 String[] individuo = linea.split(" ");
 
                 for (int i = 0; i < objetivos; i++) {
-                    String[] p = linea.split(" ");
-                    matrizRetorno[contador][0] = Double.parseDouble(p[0]);
-                    matrizRetorno[contador][1] = Double.parseDouble(p[1]);
+
+
+                    matrizRetorno[contador][i] = Double.parseDouble(individuo[i]);
                 }
                 contador++;
             }
