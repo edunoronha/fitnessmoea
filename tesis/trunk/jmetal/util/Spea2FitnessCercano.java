@@ -18,7 +18,8 @@ public class Spea2FitnessCercano {
 
     private static final Comparator overallConstraintViolationComparator_ =
             new OverallConstraintViolationComparator();
-    private double[] max = null;
+    public static double[] max = null;
+    public static boolean inicio = true;
     private double[][] valorFitness = null;
     /**
      * Stores the distance between solutions
@@ -49,18 +50,20 @@ public class Spea2FitnessCercano {
        if (max==null)
         max = new double[objetivos];
         for (int i = 0; i < solutionSet.size(); i++) {
-            if (solutionSet.get(i).getOverallConstraintViolation()==0){
-            for (int j = 0; j < objetivos; j++) {
-                if ((solutionSet.get(i).getObjective(j) < 0)&&(solutionSet.get(i).getNumberOfViolatedConstraint()!=0)) {
-                    max[j] = Math.min(solutionSet.get(i).getObjective(j), max[j]);
-                } else {
-                    if (max[j] == 0) {
+            if (solutionSet.get(i).getOverallConstraintViolation() == 0) {
+                for (int j = 0; j < objetivos; j++) {
+                    if (inicio == true) {
                         max[j] = solutionSet.get(i).getObjective(j);
                     } else {
                         max[j] = Math.min(solutionSet.get(i).getObjective(j), max[j]);
+
                     }
+
                 }
-            }
+                if (inicio == true) {
+                    inicio = false;
+                }
+
             }
             solutionSet_.get(i).setLocation(i);
         } // for
@@ -89,11 +92,13 @@ public class Spea2FitnessCercano {
         } // for
         int k = 1;
         double divisor = Math.pow(10, a.length() - 2);
-        for (int i = 0; i < distance.length; i++) {
+         for (int i = 0; i < distance.length; i++) {
+      Arrays.sort(distance[i]);
+      kDistance = 1.0 / (distance[i][k] + 2.0); // Calcule de D(i) distance
+      //population.get(i).setFitness(rawFitness[i]);
+      solutionSet_.get(i).setFitness(rawFitness[i] + (strength[i] / divisor));
+    } // for
 
-
-            solutionSet_.get(i).setFitness(rawFitness[i] + (strength[i] / divisor));
-        } // for
     } // fitnessAsign
 
     public SolutionSet environmentalSelection(int size) {
@@ -112,15 +117,15 @@ public class Spea2FitnessCercano {
                 i++;
             }
         } // while
-        if (aux.size() < size) {
-            int remain = size - aux.size();
+        
+            if (aux.size() < size) {
+                 int remain = size - aux.size();
             Comparator comparator = new FitnessComparator();
             solutionSet_.sort(comparator);
             for (i = 0; i < remain; i++) {
                 aux.add(solutionSet_.get(i));
             }
-            return aux;
-        } else if (aux.size() == size) {
+
             return aux;
         }
         double[][] distance = distance_.distanceMatrix(aux);
@@ -192,23 +197,33 @@ public class Spea2FitnessCercano {
         int flag = 0;
         if (solution1.getOverallConstraintViolation() != 0) {
             int numeroConstraints = solution1.getNumberOfViolatedConstraint();
-            return 4;
+            return solution1.numberOfObjectives()+1+solution1.getNumberOfViolatedConstraint();
         }
         for (int i = 0; i < solution1.numberOfObjectives(); i++) {
             double areaOptima = 0;//*2;
             double c = 0;
-            if (max[0] > 0) {
-                areaOptima = (max[i] * 7 / 10 + max[i]);//*2;
-                c = (max[i] * 9 / 10);
-            } else {
-                areaOptima = (max[i] *7 / 10);//*2;
-                c = (max[i] *  9 / 10);
+             String numero;
+            if(max[i]<0){
+                numero=""+(int)max[i]*(-1);
+            }else{
+                  numero = "" + (int)max[i];
             }
-            if (solution1.getObjective(i) <= areaOptima) {//(max[i]/2)){
+            
+            if (numero.length() == 3) {
+              areaOptima = Math.abs((max[i] * 5 / 10) - max[i]);//*2;
+                c = Math.abs((max[i] * 4 / 10)- max[i] );  
+            }else{
+                 areaOptima = Math.abs((max[i] * 7 / 10) - max[i]);//*2;
+//                c = Math.abs((max[i] * 9 / 10)- max[i] );
+            }
+
+              
+              if (Math.abs(solution1.getObjective(i)-max[i]) -areaOptima <=0) {//(max[i]/2)){
                 flag++;
-                if (solution1.getObjective(i) <= c) {
-                    special = 1;
-                }
+//                if (Math.abs(solution1.getObjective(i)-max[i])-c <= 0) {
+//                    special = 1;
+//
+//                }
             }
         }
 //        if ((flag == solution1.numberOfObjectives()) && (special == 1)) {
@@ -220,17 +235,30 @@ public class Spea2FitnessCercano {
 //        } else {
 //            return 3;
 //        }
-        if ((flag == solution1.numberOfObjectives())&& (special == 1) ) {
-            return 0;
-
-
-        }else if ((flag >= solution1.numberOfObjectives() * 2 / 3)|| (special == 1)) {
-            return 1;
-        } else if ((flag >= solution1.numberOfObjectives() * 1 / 3)) {
-            return 2;
-        } else {
-            return 3;
+        cont =0;
+        for (int a=solution1.numberOfObjectives();a>0;a--)
+        {
+            if ((flag==a))//&& (special == 1))
+            {
+                return cont;
+            }
+            cont++;
         }
+//        if (special==1)
+//        return cont;
+
+              return cont++;
+//        if ((flag == solution1.numberOfObjectives())&& (special == 1) ) {
+//            return 0;
+//
+//
+//        }else if ((flag >= solution1.numberOfObjectives() * 2 / 3)&& (special == 1)) {
+//            return 1;
+//        } else if ((flag >= solution1.numberOfObjectives() * 1 / 3)&& (special == 1)) {
+//            return 2;
+//        } else {
+//            return 3;
+//        }
     }
 
     public double[] compare(Object object1) {
