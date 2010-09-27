@@ -20,15 +20,23 @@ public class SetCoverage {
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) {
-        double[][] matrizSPEA = archivoAMatriz("C:/tesis/FUNspea0");
-//        double[][] matrizNSGA = archivoAMatriz("C:/tesis/NSGAIIFUN");
-//        double[][] matrizSPEAdis = archivoAMatriz("C:/tesis/SPEAFUNDISTANCIA");
-//        double[][] matrizSPEAcua = archivoAMatriz("C:/tesis/SPEAFUNCUADRANTE");
-        double[][] matrizSPEAcercano = archivoAMatriz("C:/tesis/FUNspeaCercano0");
-        int objetivos = objetivos("C:/tesis/FUNspea0");
+         String problema = "setpacking 4 500";
+
+        double[][] matrizSPEA = archivoAMatriz("C:/tesis/"+problema+"/SPEA2/FUNspea2_"+0);
+          double[][] matrizNSGA = archivoAMatriz(problema+"/NSGA2/FUNnsga2_"+0);
+            double[][] matrizSPEAcercano =archivoAMatriz("C:/tesis/"+problema+"/SpeaCercano/FUNspeaCercano_"+0);
+//     double[][] matrizSPEA = archivoAMatriz("C:/tesis/"+problema+"/promSPEA");
+//          double[][] matrizNSGA = archivoAMatriz(problema+"/PromNSGA");
+//            double[][] matrizSPEAcercano =archivoAMatriz("C:/tesis/"+problema+"/promCercano");
+
+      
+        int objetivos = objetivos("C:/tesis/"+problema+"/SPEA2/FUNspea2_"+0);
         SetCoverage SC = new SetCoverage();
         SC.calcular(matrizSPEA,matrizSPEAcercano, objetivos);
         SC.calcular(matrizSPEAcercano, matrizSPEA, objetivos);
+         SC.calcular(matrizNSGA, matrizSPEAcercano, objetivos);
+        SC.calcular(matrizSPEAcercano, matrizNSGA, objetivos);
+       
 //        SC.calcular(matrizNSGA, matrizSPEAdis, objetivos);
 //        SC.calcular(matrizSPEAdis, matrizNSGA, objetivos);
 //        SC.calcular(matrizSPEAdis, matrizSPEA, objetivos);
@@ -65,6 +73,44 @@ public class SetCoverage {
 
         System.out.println(totalDom + "%");
         return totalDom;
+    }
+    public void paretoNoDominado(double[][] X, int numberOfObjectives) {
+        int xObj = 0;
+        double xDomy = 0.0;
+        double[] dominados = new double[X.length];
+        double totalDom = 0.0;
+        int cont=0;
+        for (int i = 0; i < X.length; i++) {
+            for (int k = 0; k < X.length; k++) {
+                for (int j = 0; j < numberOfObjectives; j++) {
+                    double x = X[i][j];
+                    double y = X[k][j];
+                    if (x <= y) {
+                        xObj += 1;
+                    }
+                    if (xObj == numberOfObjectives) {
+                        dominados[cont] = k;
+                        cont++;
+                    }
+                }
+                xObj = 0;
+            }
+        }
+        double[][] noDominado = new double[X.length][X[0].length];
+         for (int i = 0; i < X.length; i++) {
+             int sacar=0;
+              for (int j= 0; j< dominados.length; j++) {
+            if (i==dominados[j])
+                sacar=1;
+        }
+             if (sacar==0){
+                 noDominado[i]=X[i];
+
+             }
+         }
+
+
+
     }
  public static double[][] archivoAMatriz(String path) {
         String linea = "";
