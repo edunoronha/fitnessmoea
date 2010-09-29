@@ -88,11 +88,12 @@ public class KnapsackMuchos extends Problem {
 
     double[] VarPeso;
     double maxCapacidad1 = 1900.0;
+    double[]maxCapacidad;//={5200,4400,4600,1900,1600,2000,900};
     double maxCapacidad2 = 2300.0;
-    double maxCapacidad3 = 3280.0;
-    double maxCapacidad4 = 1500.0;
+    double maxCapacidad3 = 2280.0;
+    double maxCapacidad4 = 2300.0;
     double maxCapacidad5 = 1900.0;
-    double maxCapacidad6 = 3000.0;
+    double maxCapacidad6 = 2000.0;
  public KnapsackMuchos(String solutionType) throws ClassNotFoundException {
     this(solutionType, 3);
   } // Kursawe
@@ -100,12 +101,13 @@ public class KnapsackMuchos extends Problem {
     
  }
     public KnapsackMuchos(String solutionType, Integer numberOfObj) throws ClassNotFoundException {
-        numberOfVariables_=750;
+        numberOfVariables_=85;
         numberOfObjectives_ = numberOfObj;
         valores = new double[numberOfObj][numberOfVariables_];
         VarPeso = new double[numberOfVariables_];
+        maxCapacidad = new double[numberOfObj];
          for (int i =0;i<numberOfObj;i++){
-
+            maxCapacidad[i] = PseudoRandom.randInt((int)(numberOfVariables_*15/numberOfObj), (int)(numberOfVariables_*30/numberOfObj));
          for (int j=0;j<numberOfVariables_;j++){
             valores[i][j]=  PseudoRandom.randInt(1, 50) ;
 
@@ -165,56 +167,68 @@ public class KnapsackMuchos extends Problem {
         double total = 0.0;
         double[] pesos = new double[numberOfConstraints_];
         double[] constraint = new double[numberOfConstraints_];
-        if (numberOfObjectives_ >= 1) {
+        for (int i=0;i<numberOfObjectives_;i++){
+
             for (int var = 0; var < this.numberOfVariables_; var++) {
-                if (variables[var].getValue() == 1) {
-                    pesos[0] = pesos[0] + VarPeso[var];
-                    if (pesos[0] > this.maxCapacidad1) {
-                        constraint[0] = pesos[0] - maxCapacidad1;
+                if (variables[var].getValue() == i+1) {
+                    pesos[i] += VarPeso[var];
+                    if (pesos[0] > this.maxCapacidad[i]) {
+                        constraint[i] = pesos[i] - maxCapacidad[i];
                     }
                 }
             }
+
         }
-        if (numberOfObjectives_ >= 2) {
-            for (int var = 0; var < this.numberOfVariables_; var++) {
-                if (variables[var].getValue() == 2) {
-                    pesos[1] = pesos[1] + VarPeso[var];
-                    if (pesos[1] > this.maxCapacidad2) {
-                        constraint[1] = pesos[1] - maxCapacidad2;
-                    }
-                }
-            }
-        }
-        if (numberOfObjectives_ >= 3) {
-            for (int var = 0; var < this.numberOfVariables_; var++) {
-                if (variables[var].getValue() == 3) {
-                    pesos[2] = pesos[2] + VarPeso[var];
-                    if (pesos[2] > this.maxCapacidad3) {
-                        constraint[2] = pesos[2] - maxCapacidad3;
-                    }
-                }
-            }
-        }
-        if (numberOfObjectives_ >= 4) {
-            for (int var = 0; var < this.numberOfVariables_; var++) {
-                if (variables[var].getValue() == 4) {
-                    pesos[3] = pesos[3] + VarPeso[var];
-                    if (pesos[3] > this.maxCapacidad4) {
-                        constraint[3] = pesos[3] - maxCapacidad4;
-                    }
-                }
-            }
-        }
-        if (numberOfObjectives_ >= 5) {
-            for (int var = 0; var < this.numberOfVariables_; var++) {
-                if (variables[var].getValue() == 5) {
-                    pesos[4] = pesos[4] + VarPeso[var];
-                    if (pesos[4] > this.maxCapacidad5) {
-                        constraint[4] = pesos[4] - maxCapacidad5;
-                    }
-                }
-            }
-        }
+//        if (numberOfObjectives_ >= 1) {
+//            for (int var = 0; var < this.numberOfVariables_; var++) {
+//                if (variables[var].getValue() == 1) {
+//                    pesos[0] = pesos[0] + VarPeso[var];
+//                    if (pesos[0] > this.maxCapacidad1) {
+//                        constraint[0] = pesos[0] - maxCapacidad1;
+//                    }
+//                }
+//            }
+//        }
+//        if (numberOfObjectives_ >= 2) {
+//            for (int var = 0; var < this.numberOfVariables_; var++) {
+//                if (variables[var].getValue() == 2) {
+//                    pesos[1] = pesos[1] + VarPeso[var];
+//                    if (pesos[1] > this.maxCapacidad2) {
+//                        constraint[1] = pesos[1] - maxCapacidad2;
+//                    }
+//                }
+//            }
+//        }
+//        if (numberOfObjectives_ >= 3) {
+//            for (int var = 0; var < this.numberOfVariables_; var++) {
+//                if (variables[var].getValue() == 3) {
+//                    pesos[2] = pesos[2] + VarPeso[var];
+//                    if (pesos[2] > this.maxCapacidad3) {
+//                        constraint[2] = pesos[2] - maxCapacidad3;
+//                    }
+//                }
+//            }
+//        }
+//        if (numberOfObjectives_ >= 4) {
+//            for (int var = 0; var < this.numberOfVariables_; var++) {
+//                if (variables[var].getValue() == 4) {
+//                    pesos[3] = pesos[3] + VarPeso[var];
+//                    if (pesos[3] > this.maxCapacidad4) {
+//                        constraint[3] = pesos[3] - maxCapacidad4;
+//                    }
+//                }
+//            }
+//        }
+//        if (numberOfObjectives_ >= 5) {
+//            for (int var = 0; var < this.numberOfVariables_; var++) {
+//                if (variables[var].getValue() == 5) {
+//                    pesos[4] = pesos[4] + VarPeso[var];
+//                    if (pesos[4] > this.maxCapacidad5) {
+//                        constraint[4] = pesos[4] - maxCapacidad5;
+//                    }
+//                }
+//            }
+//        }
         for (int i = 0; i < this.numberOfConstraints_; i++) {
             if (constraint[i] > 0.0) {
                 number++;
