@@ -20,6 +20,7 @@ import jmetal.util.JMException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import jmetal.qualityIndicator.Hypervolume;
+import jmetal.qualityIndicator.SetCoverage;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 
@@ -106,14 +107,18 @@ public class SPEA2_main {
 
     // Result messages 
     logger_.info("Total execution time: "+estimatedTime + "ms");
-    logger_.info("Objectives values have been writen to file FUN");
+    logger_.info("Objectives values have been writen to file FUNspea");
      logger_.info("Variables values have been writen to file VAR");
   
-    population.printVariablesToFile("VAR");      
-    population.printObjectivesToFile("FUN");
-     Hypervolume toma = new Hypervolume();
-    double HV = toma.hypervolume(population.writeObjectivesToMatrix(),population.writeObjectivesToMatrix(), problem.getNumberOfObjectives());
-    System.out.print("Este es el HV del problema: "+HV);
+//     Hypervolume toma = new Hypervolume();
+//      SetCoverage T = new SetCoverage();
+//        @SuppressWarnings("static-access")
+//     double[][] f = T.archivoAMatriz("FUNspeaCercano");
+//    double HV = toma.hypervolume(population.writeObjectivesToMatrix(),f, problem.getNumberOfObjectives());
+
+//     System.out.print("Este es el HV del problema: "+HV);
+  population.printVariablesToFile("VAR","SPEA2");
+    population.printObjectivesToFile("FUNspea"+0,"SPEA2");
 
     if (indicators != null) {
       logger_.info("Quality indicators") ;

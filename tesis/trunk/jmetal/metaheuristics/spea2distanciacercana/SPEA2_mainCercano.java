@@ -19,8 +19,6 @@ import jmetal.util.Configuration;
 import jmetal.util.JMException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import jmetal.qualityIndicator.Hypervolume;
-import jmetal.qualityIndicator.SetCoverage;
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
 
@@ -71,7 +69,7 @@ public class SPEA2_mainCercano {
       //problem = new WFG1("Real");
       //problem = new DTLZ1("Real");
       //problem = new OKA2("Real") ;
-       problem = new KnapsackMuchos("Real",5);
+       problem = new KnapsackMuchos("Real",4);
     } // else
        
     algorithm = new SPEA2Cercano(problem);
@@ -107,17 +105,17 @@ public class SPEA2_mainCercano {
 
     // Result messages 
     logger_.info("Total execution time: "+estimatedTime + "ms");
-    logger_.info("Objectives values have been writen to file FUNspeaProm");
+    logger_.info("Objectives values have been writen to file FUNspeaCercano");
      logger_.info("Variables values have been writen to file VAR");
   
-    population.printVariablesToFile("VAR","SPEA2Cercano");
-    population.printObjectivesToFile("FUNspeaCercano","SPEA2Cercano");
-     Hypervolume toma = new Hypervolume();
-     SetCoverage T = new SetCoverage();
-        @SuppressWarnings("static-access")
-     double[][] f = T.archivoAMatriz("FUNspea");
-  //  double HV = toma.hypervolume(population.writeObjectivesToMatrix(),f, problem.getNumberOfObjectives());
-    //System.out.print("Este es el HV del problema: "+HV);
+//      Hypervolume toma = new Hypervolume();
+//     SetCoverage T = new SetCoverage();
+//        @SuppressWarnings("static-access")
+//     double[][] f = T.archivoAMatriz("FUNspea");
+//    double HV = toma.hypervolume(population.writeObjectivesToMatrix(),f, problem.getNumberOfObjectives());
+//   // System.out.print("Este es el HV del problema: "+HV);
+ population.printVariablesToFile("VAR","SPEA2Cercano");
+    population.printObjectivesToFile("FUNspeaCercano"+0,"SPEA2Cercano");
 
     if (indicators != null) {
       logger_.info("Quality indicators") ;

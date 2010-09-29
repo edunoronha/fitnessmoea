@@ -104,13 +104,15 @@ public class SPEA2Cercano extends Algorithm{
       solutionSet = offSpringSolutionSet;                   
     } // while
           double[][] minPareto = new double[problem_.getNumberOfObjectives()][problem_.getNumberOfObjectives()];
-       minPareto[0][0] = -100;
-       minPareto[0][1] = -100;
+     
         Hypervolume toma = new Hypervolume();
         Ranking ranking = new Ranking(archive);
 //        double[][] paretoFront = ranking.getSubfront(0).writeObjectivesToMatrix();
 //        double HV = toma.hypervolume(paretoFront, minPareto, problem_.getNumberOfObjectives());
 //       System.out.print("Este es el HV del problema tal: "+HV);
+
+     Spea2FitnessCercano.max=null;
+     Spea2FitnessCercano.inicio=true;
     return archive;
   } // execute    
 } // Spea2
